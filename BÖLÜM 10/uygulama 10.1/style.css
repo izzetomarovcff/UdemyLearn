@@ -1,0 +1,47 @@
+html{
+    scroll-behavior: smooth;
+}
+body{
+    margin: 0;
+    padding: 0;
+    color: #fff;
+}
+.page{
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+.page h1{
+    font-size: 5rem;
+    margin: 2rem;
+}
+.page p {
+    font-size: 1.5rem;
+}
+#page-1{
+    background-color: #313552;
+}
+#page-2{
+    background-color: #B8405E;
+}
+#page-3{
+    background-color: #2EB086;
+}
+
+.btn{
+    display: inline-block;
+    padding: 1rem 2rem;
+    background-color: #f4f4f4;
+    color: #333;
+    text-decoration: none;
+    border: none;
+    font-size: 1.2rem;
+    transition: all .3s ease-in;
+}
+.btn:hover{
+    background-color: #333;
+    color: #fff;
+}

@@ -1,0 +1,35 @@
+//tablets and smaller
+@media(max-width: 768px){
+    #header{
+        &__home{
+            height: 30rem;
+            .header-content{
+                padding-top: 7rem;
+                h1{
+                    font-size: 2.6rem;
+                }
+            }
+        }
+    }
+}
+//mobile
+@media(max-width: 576px){
+    #header{
+        &__home{
+            height: 10rem;
+            border-bottom: 2px solid $primary-color;
+            background-position: 20% 30%;
+            .header-content{
+                display: none;
+            }
+        }
+        &__inner{
+            height: 10rem;
+            border-bottom: 2px solid $primary-color;
+            background-position: 20% 30%;
+            .header-content{
+                display: none;
+            }
+        }
+    }
+}
