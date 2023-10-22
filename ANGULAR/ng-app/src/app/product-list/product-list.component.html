@@ -1,4 +1,4 @@
-<div class="card mb-3">
+<div class="card mb-3" *ngFor="let product of products">
     <div class="row">
         <div class="col-3">
             <img src="../../assets/images//{{product.imageUrl}}" alt="" class="img-fluid rounded-start">
@@ -12,3 +12,8 @@
     </div>
 </div>
 
+<ul>
+    <li *ngFor="let p of productsList">
+        {{p}}
+    </li>
+</ul>
