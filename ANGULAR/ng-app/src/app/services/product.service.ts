@@ -6,7 +6,7 @@ import { Product } from "../models/product";
 // local service
 @Injectable()
 export class ProductService {
-    private url = "https://ng-shopapp-d4ef5-default-rtdb.firebaseio.com/";
+    private url = "https://ng-shopapp-c1710-default-rtdb.firebaseio.com/";
 
     constructor(private http: HttpClient) {}
 
