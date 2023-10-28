@@ -1,11 +1,8 @@
-import { Component } from '@angular/core';
-import { Product } from './models/product';
 import { HttpClient } from '@angular/common/http';
+import { Component } from '@angular/core';
 import { ProductService } from './services/product.service';
 
 @Component({
-  // selector: 'app',
-  // selector: '.app',
   selector: '#app',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
@@ -14,15 +11,28 @@ import { ProductService } from './services/product.service';
 export class AppComponent {
   private title = 'Home Page';
 
-constructor(private http: HttpClient, private productService:ProductService){
-
-}
+  constructor(
+    private http: HttpClient,
+    private productService: ProductService
+  ) { }
 
   getTitle() {
     return this.title;
   }
-  createProduct(){
-    const product = {id: 6, name: "iphone 19", price: 70000, imageUrl: "3.jpeg", description: "iyi telefon", isActive: true, categoryId: 3}
-    this.productService.createProduct(product).subscribe(data=>console.log(data))
+
+  createProduct() {
+
+    const product = { 
+      id: 1, 
+      name: "iphone 19", 
+      price: 20000, 
+      imageUrl: "3.jpeg", 
+      description: "iyi telefon", 
+      isActive: true, 
+      categoryId: 2 
+    }
+
+    this.productService.createProduct(product).subscribe(data => console.log(data));
+
   }
 }
