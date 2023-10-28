@@ -8,24 +8,29 @@ import { CategoryRepository } from '../models/category.repository';
   styleUrls: ['./category-list.component.css']
 })
 export class CategoryListComponent implements OnInit {
+
   categories: Category[];
-  selectedCategory:Category | null
-  categoryRepository: CategoryRepository
+  selectedCategory: Category | null; 
+  categoryRepository: CategoryRepository;
+
   constructor() {
-    this.categoryRepository = new CategoryRepository()
-    this.categories = this.categoryRepository.getCategory()
+    this.categoryRepository = new CategoryRepository();
+    this.categories = this.categoryRepository.getCategories();
   }
 
   ngOnInit(): void {
   }
 
-  selectCategory(category:Category){
-    if(this.selectedCategory){
-      this.selectedCategory = null
-    }else{
-      this.selectedCategory = category
+  displayAll = true;
+
+  selectCategory(category?: Category) {
+    if(category) {
+      this.selectedCategory = category;
+      this.displayAll = false;
+    } else {
+      this.selectedCategory = null;
+      this.displayAll = true;
     }
-    
   }
 
 }

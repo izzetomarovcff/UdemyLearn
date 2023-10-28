@@ -1,44 +1,28 @@
-
-    <div class="card mb-3 p-1 border border-warning" *ngIf="selectedProduct">
-        <div class="row">
-            <div class="col-3">
-                <img src="../../assets/images//{{selectedProduct.imageUrl}}" alt="" class="img-fluid rounded-start">
-            </div>
-            <div class="col-9">
-                <div class="card-body">
-                    <h5 class="card-title">{{selectedProduct.name}}</h5>
-                    <p class="card-text">{{selectedProduct.description}}</p>
-                    <button (click)="unselectProduct()" class="btn btn-primary">Seçimi kaldır</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
 <div *ngIf="products.length>0; else noProducts">
-    <ng-template [ngTemplateOutlet]="poductList" [ngTemplateOutletContext]="{products: products}"></ng-template>
+    <ng-template [ngTemplateOutlet]="productList" [ngTemplateOutletContext]="{products: products}"></ng-template>
 </div>
 
-<ng-template #poductList let-products="products">
-    <div *ngFor="let product of products">
+<ng-template #productList let-products="products">
+    <div *ngFor="let product of products" >
         <div *ngIf="product.isActive" class="card mb-3 p-1">
-        <div class="row">
-            <div class="col-3">
-                <img src="../../assets/images//{{product.imageUrl}}" alt="" class="img-fluid rounded-start">
-            </div>
-            <div class="col-9">
-                <div class="card-body">
-                    <h5 class="card-title">{{product.name}}</h5>
-                    <p class="card-text">{{product.description}}</p>
-                    <button (click)="selectProduct(product)" class="btn btn-primary">Ürünü seç</button>
+            <div class="row">
+                <div class="col-3">
+                    <img src="/assets/images/{{ product.imageUrl }}" alt="" class="img-fluid rounded-start">
+                </div>
+                <div class="col-9">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="cart-text">{{ product.description }}</p>
+                        <a routerLink="/products/{{product.id}}" class="btn btn-primary">Ürün Detay</a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 </ng-template>
+
 <ng-template #noProducts>
-    <div class="alert alert-warning" >
-        No Products
+    <div class="alert alert-warning">
+        no products
     </div>
 </ng-template>
