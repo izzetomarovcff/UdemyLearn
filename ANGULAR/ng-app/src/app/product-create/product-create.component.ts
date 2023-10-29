@@ -13,6 +13,7 @@ import { Category } from '../models/category';
 export class ProductCreateComponent implements OnInit {
 
   categories:Category[]
+  error:string = ""
 
   constructor(private productService:ProductService,private categoryService:CategoryService, private router:Router) { }
 
@@ -22,6 +23,32 @@ export class ProductCreateComponent implements OnInit {
     })
   }
   saveProduct(name:any,price:any,imageUrl:any,description:any,isActive:any,categoryId:any){
+    if(name.value == "" || name.value.lenght<5) {
+      this.error = "Ürün ismi için en az 5 karakter giriniz!"
+      return
+    }
+    if(price.value == "") {
+      this.error = "Ürün fiyatı girmelisiniz"
+      return
+    }
+    if(imageUrl.value == "") {
+      this.error = "Resim girmelisiniz"
+      return
+    }
+
+    const extensions = ["jpeg","jpg","png"]
+    const extension = imageUrl.value.split(".").pop()
+
+    if(extensions.indexOf(extension) == -1){
+      this.error = "Resim uzantıları sadece jpeg, jpg, png olmalıdır!"
+      return
+    }
+
+
+    if(categoryId.value == "0") {
+      this.error = "Kategori seçmelisiniz!"
+      return
+    }
     const product = { 
       id: 1, 
       name: name.value , 
