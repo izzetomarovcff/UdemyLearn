@@ -12,10 +12,10 @@
                 <li class="nav-item">
                     <a routerLink="/products" class="nav-link">Products</a>
                 </li>
-                <li class="nav-item" *ngIf="isAdmin">
+                <li class="nav-item" *ngIf="isAuthenticated">
                     <a routerLink="/products/create" class="nav-link">Create Product</a>
                 </li>
-                <li class="nav-item" *ngIf="isAdmin">
+                <li class="nav-item" *ngIf="isAuthenticated">
                     <a routerLink="/categories/create" class="nav-link">Create Category</a>
                 </li>
             </ul>
@@ -26,8 +26,8 @@
                 <li *ngIf="!isAuthenticated" class="nav-item">
                     <a routerLink="/auth" class="nav-link">Register</a>
                 </li>
-                <li  *ngIf="isAuthenticated" class="nav-item">
-                    <a  (click)="logout()" routerLink="/auth" class="nav-link">Log Out</a>
+                <li *ngIf="isAuthenticated" class="nav-item">
+                    <a routerLink="/auth" class="nav-link">Log Out</a>
                 </li>
             </ul>
         </div>

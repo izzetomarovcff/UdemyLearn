@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ProductService } from './services/product.service';
-import { AuthService } from './services/auth.service';
 
 @Component({
   selector: '#app',
@@ -9,10 +8,17 @@ import { AuthService } from './services/auth.service';
   styleUrls: ['./app.component.css'],
   providers: [ProductService]
 })
-export class AppComponent implements OnInit{
+export class AppComponent {
+  private title = 'Home Page';
 
-  constructor(private authService: AuthService) { }
-  ngOnInit(): void {
-    this.authService.autoLogin()
+  constructor(
+    private http: HttpClient,
+    private productService: ProductService
+  ) { }
+
+  getTitle() {
+    return this.title;
   }
+
+  
 }
