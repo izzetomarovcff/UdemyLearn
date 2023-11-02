@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthResponse } from '../models/auth-response';
-import { Subject, catchError, tap, throwError } from 'rxjs';
+import { BehaviorSubject, Subject, catchError, tap, throwError } from 'rxjs';
 import { User } from '../models/user';
 
 
@@ -11,7 +11,7 @@ import { User } from '../models/user';
 export class AuthService {
 
   api_key = "AIzaSyCZaYYufRzvUyXOSLWOF4X1JSr5ASPYI9w"
-  user = new Subject<User>()
+  user = new BehaviorSubject<User | null>(null)
 
 
   url = "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key="
@@ -19,33 +19,34 @@ export class AuthService {
   register(email:string, password:string){
     return this.http.post<AuthResponse>("https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=" + this.api_key, {email: email, password: password, returnSecureToken: true}).pipe(
     tap(response =>{
-      const expiresDate = new Date(new Date().getTime() + (+response.expiresIn * 1000))
-      const user = new User(
-        response.email,
-        response.localId,
-        response.idToken,
-        expiresDate
-      );
-      this.user.next(user)
+      this.handleUser(response.email, response.localId, response.idToken, response.expiresIn)
     }),   
     catchError(this.handleError)
     )
   }
 
+  logout(){
+    this.user.next(null)
+    localStorage.removeItem("user");
+  }
+
   login(email:string,password:string){
     return this.http.post<AuthResponse>("https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key="+this.api_key, {email: email, password: password, returnSecureToken: true}).pipe(
     tap(response =>{
-      const expiresDate = new Date(new Date().getTime() + (+response.expiresIn * 1000))
-      const user = new User(
-        response.email,
-        response.localId,
-        response.idToken,
-        expiresDate
-      );
-      this.user.next(user)
+      this.handleUser(response.email, response.localId, response.idToken, response.expiresIn)
     }),  
     catchError(this.handleError)
     )
+  }
+  autoLogin(){
+    if(localStorage.getItem("user") == null){
+      return;
+    }
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    const loadedUser = new User(user.email, user.id, user._token, new Date(user._tokenExpirationDate))
+    if(loadedUser.token){
+      this.user.next(loadedUser)
+    }
   }
   private handleError(err:HttpErrorResponse){
     let message = "hata Olustu";
@@ -74,5 +75,19 @@ export class AuthService {
     }
 
     return throwError(()=> message)
+  }
+  private handleUser(email: string, localId:string, idToken:string, expiresIn:string){
+    const expiresDate = new Date(new Date().getTime() + (+expiresIn * 1000))
+    const user = new User(
+      email,
+      localId,
+      idToken,
+      expiresDate
+    );
+
+    console.log(user)
+
+    this.user.next(user)
+    localStorage.setItem("user", JSON.stringify(user))
   }
 }
