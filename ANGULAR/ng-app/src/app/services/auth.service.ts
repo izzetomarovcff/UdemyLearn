@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthResponse } from '../models/auth-response';
-import { catchError, tap, throwError } from 'rxjs';
+import { Subject, catchError, tap, throwError } from 'rxjs';
 import { User } from '../models/user';
 
 
@@ -11,6 +11,7 @@ import { User } from '../models/user';
 export class AuthService {
 
   api_key = "AIzaSyCZaYYufRzvUyXOSLWOF4X1JSr5ASPYI9w"
+  user = new Subject<User>()
 
 
   url = "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key="
@@ -25,7 +26,7 @@ export class AuthService {
         response.idToken,
         expiresDate
       );
-      console.log(user)
+      this.user.next(user)
     }),   
     catchError(this.handleError)
     )
@@ -41,7 +42,7 @@ export class AuthService {
         response.idToken,
         expiresDate
       );
-      console.log(user)
+      this.user.next(user)
     }),  
     catchError(this.handleError)
     )
