@@ -1,15 +1,16 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, catchError, Subject, tap, throwError } from 'rxjs';
-import { AuthResponse } from '../models/auth-response';
-import { User } from '../models/user';
+import { environment } from 'src/environments/environment';
+import { AuthResponse } from './auth-response.model';
+import { User } from './user.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  api_key = "AIzaSyCZaYYufRzvUyXOSLWOF4X1JSr5ASPYI9w";
+  api_key = environment.api_key;
   user = new BehaviorSubject<User|null>(null);
 
   constructor(private http: HttpClient) { }
@@ -61,21 +62,21 @@ export class AuthService {
   }
 
   private handleError(err: HttpErrorResponse) {
-    let message = "Some Errors Try Again";
+    let message = "hata oluştu";
 
     if(err.error.error) {
       switch(err.error.error.message) {
         case "EMAIL_EXISTS":
-          message = "This Email Alredy Used"
+          message = "bu mail adresi zaten kullanılıyor."
           break;
         case "TOO_MANY_ATTEMPTS_TRY_LATER":
-          message = "Wait and Try Again"
+          message = "bir süre bekleyip tekrar deneyiniz."
           break;
         case "EMAIL_NOT_FOUND":
-          message = "Email Not Found";
+          message = "email adresi bulunamadı";
           break;
         case "INVALID_PASSWORD":
-          message ="Wrong Password";
+          message ="hatalı parola";
           break;
       }
     }

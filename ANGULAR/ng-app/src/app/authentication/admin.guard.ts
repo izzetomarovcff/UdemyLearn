@@ -1,7 +1,8 @@
 import { Injectable } from "@angular/core";
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from "@angular/router";
 import { map, Observable, tap } from "rxjs";
-import { AuthService } from "../services/auth.service";
+import { environment } from "src/environments/environment";
+import { AuthService } from "./auth.service";
 
 @Injectable({ providedIn: 'root' })
 export class AdminGuard implements CanActivate {
@@ -16,7 +17,7 @@ export class AdminGuard implements CanActivate {
         
         return this.authService.user.pipe(
             map(user => {
-                return !!user && user.email == "izzetomarovcff@gmail.com"
+                return !!user && user.email == environment.adminEmail
             }),
             tap(isAdmin => {
                 if(!isAdmin) {
