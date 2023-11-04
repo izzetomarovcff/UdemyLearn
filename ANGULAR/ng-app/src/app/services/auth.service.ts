@@ -1,78 +1,101 @@
-import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { BehaviorSubject, catchError, Subject, tap, throwError } from 'rxjs';
 import { AuthResponse } from '../models/auth-response';
-import { Subject, catchError, tap, throwError } from 'rxjs';
 import { User } from '../models/user';
-
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  api_key = "AIzaSyCZaYYufRzvUyXOSLWOF4X1JSr5ASPYI9w"
-  user = new Subject<User>()
+  api_key = "AIzaSyCZaYYufRzvUyXOSLWOF4X1JSr5ASPYI9w";
+  user = new BehaviorSubject<User|null>(null);
 
-
-  url = "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key="
   constructor(private http: HttpClient) { }
-  register(email:string, password:string){
-    return this.http.post<AuthResponse>("https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=" + this.api_key, {email: email, password: password, returnSecureToken: true}).pipe(
-    tap(response =>{
-      const expiresDate = new Date(new Date().getTime() + (+response.expiresIn * 1000))
-      const user = new User(
-        response.email,
-        response.localId,
-        response.idToken,
-        expiresDate
+
+  register(email: string, password: string) {
+
+      return this.http.post<AuthResponse>("https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=" + this.api_key, {
+        email: email,
+        password: password,
+        returnSecureToken: true
+      }).pipe(
+        tap(response => {
+          this.handleUser(response.email, response.localId, response.idToken, response.expiresIn);
+        }),
+        catchError(this.handleError)
       );
-      this.user.next(user)
-    }),   
-    catchError(this.handleError)
-    )
   }
 
-  login(email:string,password:string){
-    return this.http.post<AuthResponse>("https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key="+this.api_key, {email: email, password: password, returnSecureToken: true}).pipe(
-    tap(response =>{
-      const expiresDate = new Date(new Date().getTime() + (+response.expiresIn * 1000))
-      const user = new User(
-        response.email,
-        response.localId,
-        response.idToken,
-        expiresDate
-      );
-      this.user.next(user)
-    }),  
-    catchError(this.handleError)
-    )
+  logout() {
+    this.user.next(null);
+    localStorage.removeItem("user");
   }
-  private handleError(err:HttpErrorResponse){
-    let message = "hata Olustu";
 
-    if(err.error.error){
-      switch(err.error.error.message){
+  login(email:string, password: string) {
+    return this.http.post<AuthResponse>("https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=" + this.api_key, {
+        email: email,
+        password: password,
+        returnSecureToken: true
+    }).pipe(
+      tap(response => {
+        this.handleUser(response.email, response.localId, response.idToken, response.expiresIn);
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  autoLogin() {
+    if(localStorage.getItem("user") == null) {
+      return;
+    }
+
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+
+    const loadedUser = new User(user.email, user.id,user._token, new Date(user._tokenExpirationDate));
+
+    if(loadedUser.token) {
+      this.user.next(loadedUser);
+    }
+  }
+
+  private handleError(err: HttpErrorResponse) {
+    let message = "Some Errors Try Again";
+
+    if(err.error.error) {
+      switch(err.error.error.message) {
         case "EMAIL_EXISTS":
-          message = "Bu Mail Adresi Zaten Kullaniliyor";
-          break;
-        case "OPERATION_NOT_ALLOWED":
-          message = "Giris Yasaklandi";
+          message = "This Email Alredy Used"
           break;
         case "TOO_MANY_ATTEMPTS_TRY_LATER":
-          message = "Bir sure bekleyip tekrar dene";
+          message = "Wait and Try Again"
           break;
         case "EMAIL_NOT_FOUND":
-          message = "Email adresi bulunamadi";
+          message = "Email Not Found";
           break;
         case "INVALID_PASSWORD":
-          message = "Yalnis Sifre";
-          break;
-        case "USER_DISABLED":
-          message = "Hesabiniz Devre Disi";
+          message ="Wrong Password";
           break;
       }
     }
 
-    return throwError(()=> message)
+    return throwError(() => message);
+  }
+
+
+  private handleUser(email: string, localId: string, idToken: string, expiresIn: string) {
+    const expirationDate = new Date(new Date().getTime() + (+expiresIn * 1000))
+        
+    const user = new User(
+      email,
+      localId,
+      idToken,
+      expirationDate
+    );
+
+    this.user.next(user);
+
+    localStorage.setItem("user", JSON.stringify(user));
   }
 }

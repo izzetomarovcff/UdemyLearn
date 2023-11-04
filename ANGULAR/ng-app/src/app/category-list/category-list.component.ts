@@ -14,13 +14,12 @@ export class CategoryListComponent implements OnInit {
   categories: Category[];
   selectedCategory: Category | null; 
 
-  constructor(private categoryService:CategoryService) {
-  }
+  constructor(private categoryService: CategoryService) { }
 
   ngOnInit(): void {
-    this.categoryService.getCategories().subscribe(data=>{
-      this.categories = data
-    })
+    this.categoryService.getCategories().subscribe(data => {
+      this.categories = data;
+    });
   }
 
   displayAll = true;
